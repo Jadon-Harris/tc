@@ -7,7 +7,7 @@
   "provider": {
     "providerID": "static",
     "providerType": "static",
-    "rootURL": "http://10.10.138.9",
+    "rootURL": "http://taskcluster",
     "workerID": "gw-1",
     "workerGroup": "gw-group",
     "workerPoolID": "gw-group/gw",
