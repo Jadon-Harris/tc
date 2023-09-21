@@ -1,0 +1,14 @@
+{
+  "accessToken": "j2Z6zW2QSLehailBXlosdw9e2Ti8R_Qh2M4buAEQfsMA",
+  "clientId": "static/taskcluster/root",
+  "ed25519SigningKeyLocation": "/etc/generic-worker/ed25519_key",
+  "rootURL": "http://taskcluster",
+  "workerId": "gw-1",
+  "provisionerId": "gw-group",
+  "workerType": "gw",
+  "livelogExecutable": "/usr/local/bin/livelog",
+  "taskclusterProxyExecutable": "/usr/local/bin/taskcluster-proxy",
+  "publicIP": "10.10.138.9",
+  "livelogPortBase": 50000,
+  "livelogExposePort": 49999
+}

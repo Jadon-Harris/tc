@@ -1,0 +1,20 @@
+{
+  "worker": {
+    "implementation": "generic-worker",
+    "path": "/usr/local/bin/generic-worker",
+    "configPath": "/etc/generic-worker/config-worker-runner.yml"
+  },
+  "provider": {
+    "providerID": "static",
+    "providerType": "static",
+    "rootURL": "http://10.10.138.9",
+    "workerID": "gw-1",
+    "workerGroup": "gw-group",
+    "workerPoolID": "gw-group/gw",
+    "workerNodeType": "generic-worker",
+    "staticSecret": "j2Z6zW2QSLehailBXlosdw9e2Ti8R_Qh2M4buAEQfsMA"
+  },
+  "workerConfig": {
+    "ed25519SigningKeyLocation": "/etc/generic-worker/ed25519_key"
+  }
+}
