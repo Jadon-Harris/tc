@@ -1,0 +1,18 @@
+provider:
+  rootURL: "http://taskcluster"
+  providerID: static
+  staticSecret: "j2Z6zW2QSLehailBXlosdw9e2Ti8R_Qh2M4buAEQfsMA"
+  workerPoolID: gwm-group/gwm
+  workerGroup: gwm-group
+  workerID: gwm-1
+worker:
+  implementation: generic-worker
+  path: /usr/local/bin/generic-worker
+  configPath: /etc/
+workerConfig:
+  cleanUpTaskDirs: true
+  disableReboots: true
+  ed25519SigningKeyLocation: "/etc/generic-worker/ed25519_key"
+  runTasksAsCurrentUser: false
+  shutdownMachineOnIdle: false
+  shutdownMachineOnInternalError: false
