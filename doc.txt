@@ -1,0 +1,75 @@
+3.2.1.2 Multiuser generic worker
+与simple generic woker相同步骤，下载时需要替换generic-worker-simple-linux-amd64为generic-worker-multiuser-linux-amd64，但注意worker.service步骤！！！
+- 更新源信息
+apt update
+DEBIAN_FRONTEND=noninteractive apt upgrade -yq
+- 安装curl (如果已经安装过，跳过此步骤)
+apt install -y curl
+- 安装docker (如果已经安装过，跳过此步骤)
+apt install -y apt-transport-https ca-certificates software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+apt update
+apt-cache policy docker-ce | grep -qF download.docker.com
+apt install -y docker-ce
+sleep 5
+systemctl status docker | grep "Started Docker Application Container Engine"
+usermod -aG docker ubuntu
+- 下载generic-worker, taskcluster-proxy 和 livelog 到 /usr/local/bin文件夹，建议下载最新版（截至2023-07-17 版本更新至v54.2.0，repo地址(https://github.com/taskcluster/taskcluster/releases）
+cd /usr/local/bin
+curl -L "https://github.com/taskcluster/taskcluster/releases/download/v54.2.0/generic-worker-multiuser-linux-amd64" > generic-worker
+curl -L "https://github.com/taskcluster/taskcluster/releases/download/v54.2.0/livelog-linux-amd64" > livelog
+curl -L "https://github.com/taskcluster/taskcluster/releases/download/v54.2.0/taskcluster-proxy-linux-amd64" > taskcluster-proxy
+- 更改文件权限
+chmod a+x /usr/local/bin/{generic-worker,taskcluster-proxy,livelog}
+- 创建所需文件夹
+mkdir -p /etc/generic-worker /var/local/generic-worker
+- 检查generic worker版本是否正确
+/usr/local/bin/generic-worker --version
+- 生成产物相关密钥
+/usr/local/bin/generic-worker new-ed25519-keypair --file /etc/generic-worker/ed25519_key
+- 将taskcluster 映射到 127.0.0.1
+echo 127.0.1.1 taskcluster >> /etc/hosts
+- worker.service 将 generic-worker 配置为在每次server启动时使用静态本地配置文件运行
+sudo touch /lib/systemd/system/worker.service
+sudo vim /lib/systemd/system/worker.service
+worker.service 内容：
+[Unit]
+Description=Start TC worker
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/generic-worker run --config /etc/generic-worker/config
+# log to console to make output visible in cloud consoles, and syslog for ease of
+# redirecting to external logging services
+StandardOutput=syslog+console
+StandardError=syslog+console
+User=root
+
+[Install]
+RequiredBy=graphical.target
+启动服务：
+sudo systemctl enable worker
+- 新建配置文件
+sudo touch /etc/generic-worker/config
+- 编辑配置文件
+sudo vim /etc/generic-worker/config
+下方为配置文件的例子，更多可配置项使用generic-worker config --help命令查看
+{
+  "accessToken": "j2Z6zW2QSLehailBXlosdw9e2Ti8R_Qh2M4buAEQfsMA", 
+  "clientId": "static/taskcluster/root",
+  "ed25519SigningKeyLocation": "/etc/generic-worker/ed25519_key",
+  "rootURL": "http://taskcluster",
+  "workerId": "test-multiuser-generic-worker-1", // worker 的唯一标识
+  "provisionerId": "test-multiuser-group", // 根据自己实际情况修改
+  "workerType": "test-multiuser-generic-worker", // 根据自己实际情况修改
+  "livelogExecutable": "/usr/local/bin/livelog",
+  "taskclusterProxyExecutable": "/usr/local/bin/taskcluster-proxy",
+  "publicIP": "10.10.138.9", // worker ip 地址，根据自己实际情况修改
+  "livelogPortBase": 60000,
+  "livelogExposePort": 59999
+}
+- 运行worker
+sudo generic-worker run --config config
+3.2.1.3 注意事项
+- 在/etc/generic-worker/config中  livelogPortBase和livelogExposePort要保证每个worker之间不同，否则端口会被某一个worker占用，其他worker无法在运行task时输出日志到UI界面。
