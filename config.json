@@ -1,14 +1,31 @@
 {
-  "accessToken": "j2Z6zW2QSLehailBXlosdw9e2Ti8R_Qh2M4buAEQfsMA", 
-  "clientId": "static/taskcluster/root",
-  "ed25519SigningKeyLocation": "/etc/generic-worker/ed25519_key",
-  "rootURL": "http://taskcluster",
-  "workerId": "test-multiuser-generic-worker-1", // worker 的唯一标识
-  "provisionerId": "test-multiuser-group", // 根据自己实际情况修改
-  "workerType": "test-multiuser-generic-worker", // 根据自己实际情况修改
-  "livelogExecutable": "/usr/local/bin/livelog",
-  "taskclusterProxyExecutable": "/usr/local/bin/taskcluster-proxy",
-  "publicIP": "10.10.138.9", // worker ip 地址，根据自己实际情况修改
-  "livelogPortBase": 60000,
-  "livelogExposePort": 59999
+    "name": "test_plugin",
+    "version": "1.0",
+    "readme": "",
+    "author": "jiandong.hao",
+    "remark": "test",
+    "python_version": "3.9",
+    "repo_url": "https://devops.momenta.works/Momenta/Toolchain/_git/pr-worker-serivce",
+    "repo_branch": "master",
+    "repo_commit_id": "8187c8a1a6cc78234cb4ea9d38f895c319ab296c",
+    
+    "entry": "./src/main.py",
+    "requirements": "./requirements.txt",
+    "inputs": [
+        {
+            "name": "some_params",
+            "alias": "Some Params",
+            "type": "string",
+            "required": true,
+            "default": "",
+            "depends": null,
+            "data": null
+        }
+    ],
+    "outputs": [
+        {
+            "input_name": "all_tar_url",
+            "output_name": "artifacts"
+        }
+    ]
 }
